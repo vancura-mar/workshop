@@ -2,6 +2,7 @@ import pygame
 import sys
 import time
 
+# Inicializace
 pygame.init()
 WIDTH, HEIGHT = 800, 600
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -22,6 +23,8 @@ STATE_MENU = "menu"
 STATE_GAME = "game"
 STATE_INSTRUCTIONS = "instructions"
 state = STATE_INTRO
+
+# Časovač úvodní obrazovky
 intro_start_time = time.time()
 INTRO_DURATION = 3
 
