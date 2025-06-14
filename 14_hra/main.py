@@ -121,6 +121,10 @@ while running:
             if event.key == pygame.K_ESCAPE:
                 set_state(STATE_MENU)
 
+        if state == STATE_GAME and event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                set_state(STATE_MENU)
+
     # Vykreslení aktuálního stavu
     if state == STATE_INTRO:
         draw_intro()
