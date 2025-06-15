@@ -47,7 +47,10 @@ class Game:
 
         self.honey = None  # aktuální med (padá-li)
 
-        self.font = pygame.font.SysFont("arial", 28)
+        # Načtení fontu
+        self.font = pygame.font.Font("assets/PressStart2P-Regular.ttf", 14)  # Malý font pro HUD
+        self.large_font = pygame.font.Font("assets/PressStart2P-Regular.ttf", 24)  # Větší font pro Game Over info
+        self.go_font = pygame.font.Font("assets/PressStart2P-Regular.ttf", 64)  # Velký font pro GAME OVER
 
         self.score = 0
         self.score_effect = None  # (text, x, y, time_end)
@@ -55,6 +58,22 @@ class Game:
         self.life_effect_end = 0  # čas do kdy zobrazovat efekt
 
         self.game_over = False
+        
+        # Načtení herního pozadí
+        self.background = pygame.image.load("assets/gameBackground.png")
+        self.background = pygame.transform.scale(self.background, (width, height))
+
+        # Načtení ikonek srdíček pro životy
+        HEART_SIZE = 48
+        self.heart_icon = pygame.image.load("assets/heart-scaled.png").convert_alpha()
+        self.heart_icon = pygame.transform.scale(self.heart_icon, (HEART_SIZE, HEART_SIZE))
+        self.heart_off_icon = pygame.image.load("assets/heart-off-scaled.png").convert_alpha()
+        self.heart_off_icon = pygame.transform.scale(self.heart_off_icon, (HEART_SIZE, HEART_SIZE))
+        self.HEART_SIZE = HEART_SIZE
+        self.HEART_SPACING = 2
+        self.last_life_lost_time = 0
+        self.last_life_lost_index = None
+        self.prev_lives = self.player.lives
 
     def reset(self):
         self.player = Player(self.width//2 - 25, self.height, screen_height=self.height)
@@ -76,6 +95,7 @@ class Game:
             pygame.K_a: False,
             pygame.K_d: False
         }
+        self.prev_lives = self.player.lives
 
     def handle_events(self):
         """Zpracování událostí"""
@@ -108,6 +128,12 @@ class Game:
         # Maximální x-ová pozice je začátek úlu minus šířka včelaře
         max_x = self.hive.x - self.player.width
         self.player.move(dx, self.width, max_x=max_x)
+
+        # Animace ztráty života
+        if self.player.lives < self.prev_lives:
+            self.last_life_lost_time = time.time()
+            self.last_life_lost_index = self.player.lives
+        self.prev_lives = self.player.lives
 
         # Detekce, že je včelař přímo u úlu (pravý okraj včelaře = levý okraj úlu)
         if self.player.rect.right == self.hive.rect.left:
@@ -189,7 +215,9 @@ class Game:
 
     def draw(self):
         """Vykreslení herního stavu"""
-        self.screen.fill((255, 255, 255))
+        # Vykreslení pozadí místo bílého pozadí
+        self.screen.blit(self.background, (0, 0))
+        
         self.player.draw(self.screen)
         self.hive.draw(self.screen)
         for bee in self.bees:
@@ -201,42 +229,49 @@ class Game:
             
         # HUD - grafické čtverečky
         margin = 20
-        box_size = 24
-        spacing = 6
+        section_spacing = 24  # větší mezera mezi sekcemi
+        box_size = 18  # Zmenšené boxy pro lepší proporce
+        spacing = 4    # Zmenšený spacing
         y = margin
-        # Včely u hráče
-        text1 = self.font.render("Včely u hráče:", True, (0,0,0))
+        # PLAYER BEES
+        text1 = self.font.render("PLAYER BEES:", True, (255,255,255))
         self.screen.blit(text1, (margin, y))
         y += text1.get_height() + 2
         for i in range(self.player.bee_buffer_max):
             color = (255, 200, 0) if i < self.player.bee_buffer else (220, 220, 220)
             pygame.draw.rect(self.screen, color, (margin + i*(box_size+spacing), y, box_size, box_size))
             pygame.draw.rect(self.screen, (0,0,0), (margin + i*(box_size+spacing), y, box_size, box_size), 2)
-        self.screen.blit(self.font.render(f"/ {self.player.bee_buffer_max}", True, (0,0,0)), (margin + self.player.bee_buffer_max*(box_size+spacing) + 10, y))
-        y += box_size + margin//2
-        # Včely v úlu
-        text2 = self.font.render("Včely v úlu:", True, (0,0,0))
+        self.screen.blit(self.font.render(f"/ {self.player.bee_buffer_max}", True, (255,255,255)), (margin + self.player.bee_buffer_max*(box_size+spacing) + 10, y))
+        y += box_size + section_spacing  # větší mezera před další sekcí
+        # HIVE BEES
+        text2 = self.font.render("HIVE BEES:", True, (255,255,255))
         self.screen.blit(text2, (margin, y))
         y += text2.get_height() + 2
         for i in range(self.hive.bee_buffer_max):
             color = (255, 220, 50) if i < self.hive.bee_buffer else (220, 220, 220)
             pygame.draw.rect(self.screen, color, (margin + i*(box_size//1.5+spacing//1.5), y, int(box_size//1.5), int(box_size//1.5)))
             pygame.draw.rect(self.screen, (0,0,0), (margin + i*(box_size//1.5+spacing//1.5), y, int(box_size//1.5), int(box_size//1.5)), 2)
-        self.screen.blit(self.font.render(f"/ {self.hive.bee_buffer_max}", True, (0,0,0)), (margin + int(self.hive.bee_buffer_max*(box_size//1.5+spacing//1.5)) + 10, y))
-        y += int(box_size//1.5) + margin//2
-        # Životy
-        text3 = self.font.render("Životy:", True, (0,0,0))
+        self.screen.blit(self.font.render(f"/ {self.hive.bee_buffer_max}", True, (255,255,255)), (margin + int(self.hive.bee_buffer_max*(box_size//1.5+spacing//1.5)) + 10, y))
+        y += int(box_size//1.5) + section_spacing  # větší mezera před další sekcí
+        # LIVES
+        text3 = self.font.render("LIVES:", True, (255,255,255))
         self.screen.blit(text3, (margin, y))
         y += text3.get_height() + 2
         for i in range(3):
-            color = (255, 80, 80) if i < self.player.lives else (220, 220, 220)
-            pygame.draw.rect(self.screen, color, (margin + i*(box_size+spacing), y, box_size, box_size))
-            pygame.draw.rect(self.screen, (0,0,0), (margin + i*(box_size+spacing), y, box_size, box_size), 2)
-        self.screen.blit(self.font.render("/ 3", True, (0,0,0)), (margin + 3*(box_size+spacing) + 10, y))
+            x = margin + i*(self.HEART_SIZE+self.HEART_SPACING)
+            if i < self.player.lives:
+                self.screen.blit(self.heart_icon, (x, y))
+            else:
+                if (self.last_life_lost_index == i and time.time() - self.last_life_lost_time < 0.3):
+                    small_heart = pygame.transform.scale(self.heart_icon, (32, 32))
+                    self.screen.blit(small_heart, (x + (self.HEART_SIZE-32)//2, y + (self.HEART_SIZE-32)//2))
+                else:
+                    self.screen.blit(self.heart_off_icon, (x, y))
         # Skóre
         y += box_size + margin//2
-        text4 = self.font.render(f"Skóre: {self.score}", True, (0,0,0))
-        self.screen.blit(text4, (margin, y))
+        score_text = self.font.render(f"SCORE: {self.score}", True, (255,255,255))
+        score_rect = score_text.get_rect(topright=(self.width - margin, margin))
+        self.screen.blit(score_text, score_rect)
         # Efekt získání bodů
         if self.score_effect:
             text, x, y, time_end = self.score_effect
@@ -258,17 +293,16 @@ class Game:
             overlay = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
             overlay.fill((0,0,0,180))
             self.screen.blit(overlay, (0,0))
-            go_font = pygame.font.SysFont("arial", 64, bold=True)
-            go_text = go_font.render("GAME OVER", True, (255, 0, 0))
+            go_text = self.go_font.render("GAME OVER", True, (255, 0, 0))
             go_rect = go_text.get_rect(center=(self.width//2, self.height//2 - 40))
             self.screen.blit(go_text, go_rect)
-            score_text = self.font.render(f"Skóre: {self.score}", True, (255,255,255))
+            score_text = self.large_font.render(f"SCORE: {self.score}", True, (255,255,255))
             score_rect = score_text.get_rect(center=(self.width//2, self.height//2 + 30))
             self.screen.blit(score_text, score_rect)
-            info_text = self.font.render("Stiskni ESC pro ukončení", True, (255,255,255))
+            info_text = self.large_font.render("PRESS ESC TO EXIT", True, (255,255,255))
             info_rect = info_text.get_rect(center=(self.width//2, self.height//2 + 70))
             self.screen.blit(info_text, info_rect)
-            restart_text = self.font.render("Stiskni R pro restart", True, (255,255,0))
+            restart_text = self.large_font.render("PRESS R TO RESTART", True, (255,255,0))
             restart_rect = restart_text.get_rect(center=(self.width//2, self.height//2 + 110))
             self.screen.blit(restart_text, restart_rect)
         pygame.display.flip()
