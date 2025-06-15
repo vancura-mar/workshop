@@ -165,28 +165,39 @@ class Menu:
         overlay.fill((20, 20, 60, alpha))
         self.screen.blit(overlay, (0, 0))
         
-        # Logo nahoře (menší)
-        logo_scaled = pygame.transform.rotozoom(self.logo_img, 0, 0.6)
-        logo_rect = logo_scaled.get_rect(center=(self.width // 2, 110))
-        self.screen.blit(logo_scaled, logo_rect)
-        
-        # Nadpis
-        title = self.small_font.render("INSTRUCTIONS", True, self.YELLOW)
-        title_rect = title.get_rect(center=(self.width//2, 220))
+        # Větší font pro INSTRUCTIONS
+        large_font = pygame.font.Font("assets/PressStart2P-Regular.ttf", 28)
+        title = large_font.render("INSTRUCTIONS", True, self.YELLOW)
+        title_rect = title.get_rect(center=(self.width//2, 150))
         self.screen.blit(title, title_rect)
         
-        # Instrukce
-        instructions = [
-            "Pohyb: Šipky vlevo/vpravo nebo A/D",
-            "Cíl: Zachraň včely a dones je do úlu",
-            "Pozor na vosy - omráčí tě!",
-            "Sbírej med pro extra životy"
-        ]
+        # GOAL nadpis
+        goal_title = self.small_font.render("GOAL", True, self.YELLOW)
+        goal_rect = goal_title.get_rect(center=(self.width//2, 200))
+        self.screen.blit(goal_title, goal_rect)
         
+        # Instrukce GOAL
+        instructions = [
+            "Save the bees and bring them",
+            "to the hive.",
+            "Watch out for wasps, they'll stun you!",
+            "Collect honey for extra lives."
+        ]
         for i, instruction in enumerate(instructions):
             text = self.small_font.render(instruction, True, self.WHITE)
-            text_rect = text.get_rect(center=(self.width//2, 320 + i*36))
+            text_rect = text.get_rect(center=(self.width//2, 250 + i*36))
             self.screen.blit(text, text_rect)
+        
+        # MOVEMENT nadpis
+        movement_title = self.small_font.render("MOVEMENT/CONTROLS", True, self.YELLOW)
+        movement_rect = movement_title.get_rect(center=(self.width//2, 250 + len(instructions)*36 + 36))
+        self.screen.blit(movement_title, movement_rect)
+        
+        # MOVEMENT instrukce
+        movement_instruction = "Left/right arrows or A/D keys."
+        movement_text = self.small_font.render(movement_instruction, True, self.WHITE)
+        movement_text_rect = movement_text.get_rect(center=(self.width//2, 250 + len(instructions)*36 + 36 + 36))
+        self.screen.blit(movement_text, movement_text_rect)
         
         # BACK vlevo nahoře ve stylu menu
         mouse_pos = pygame.mouse.get_pos()
