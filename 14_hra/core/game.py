@@ -26,7 +26,7 @@ class Game:
         # Vytvoření úlu vpravo dole
         self.hive = Hive(width, height)
         self.hive_forbidden_x = (self.hive.x, self.hive.x + self.hive.width)
-        self.max_bee_x = self.hive.x - 15  # včela/vosa se může spawnovat jen do této pozice
+        self.max_bee_x = self.hive.x - self.hive.width  # včela/vosa se může spawnovat jen do této pozice
         
         # Slovník pro sledování stisknutých kláves (pouze vlevo/vpravo)
         self.keys = {
