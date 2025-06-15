@@ -6,7 +6,7 @@ class Hive(GameObject):
         x = screen_width - width  # vpravo na obrazovce
         y = screen_height - height     # dole na obrazovce
         color = (180, 120, 40)         # hnědá barva
-        self.original_image = pygame.image.load("assets/hive-scaled.png").convert_alpha()
+        self.original_image = pygame.image.load("assets/hive-scaled2.png").convert_alpha()
         self.image = pygame.transform.scale(self.original_image, (width, height))
         super().__init__(x, y, width, height, color, image=self.image)
         self.bee_buffer = 0            # zásobník včel v úlu
