@@ -78,7 +78,7 @@ class Game:
     def reset(self):
         self.player = Player(self.width//2 - 25, self.height, screen_height=self.height)
         self.hive = Hive(self.width, self.height)
-        self.max_bee_x = self.hive.x - 15
+        self.max_bee_x = self.hive.x - 40
         self.bees = []
         self.wasps = []
         self.honey = None

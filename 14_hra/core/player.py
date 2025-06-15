@@ -2,7 +2,7 @@ import pygame
 import time
 
 class Player:
-    def __init__(self, x, y, width=50, height=50, speed=5, screen_height=800):
+    def __init__(self, x, y, width=70, height=90, speed=5, screen_height=800):
         """Inicializace včelaře"""
         self.x = x
         # Y-ová pozice je vždy na spodní hraně
