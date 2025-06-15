@@ -9,7 +9,7 @@ import random
 import time
 
 class Game:
-    def __init__(self, width=500, height=800, title="Bee Saver"):
+    def __init__(self, width=500, height=700, title="Bee Saver"):
         """Inicializace hry"""
         pygame.init()
         self.width = width
