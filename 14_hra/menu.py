@@ -13,6 +13,8 @@ class Menu:
         self.height = height
         self.buttons = []
         self.cloud_offset = 0
+        self.selected_index = 0  # Nový atribut pro klávesové ovládání
+        self.keyboard_active = True  # Nový atribut
         
         # Načtení fontů
         self.small_font = pygame.font.Font("assets/PressStart2P-Regular.ttf", 20)
@@ -79,8 +81,10 @@ class Menu:
         
         # Vykreslení tlačítek
         mouse_pos = pygame.mouse.get_pos()
-        for button in self.buttons:
-            if button["rect"].collidepoint(mouse_pos):
+        for i, button in enumerate(self.buttons):
+            is_hover = button["rect"].collidepoint(mouse_pos)
+            is_selected = (i == self.selected_index and self.keyboard_active)
+            if is_hover or is_selected:
                 color = self.YELLOW
                 font_used = self.hover_font
             else:
