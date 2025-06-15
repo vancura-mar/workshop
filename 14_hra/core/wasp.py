@@ -14,6 +14,7 @@ class Wasp(GameObject):
         x = random.randint(0, max_x)
         y = -height  # Začíná těsně nad obrazovkou
         color = (30, 30, 30)  # Tmavá barva pro vosu
+
         sprite_sheet = pygame.image.load("assets/zla-vosa.png").convert_alpha()
         frame_count = 4
         frame_width = sprite_sheet.get_width()
@@ -23,9 +24,11 @@ class Wasp(GameObject):
             frame = sprite_sheet.subsurface((0, i * frame_height, frame_width, frame_height))
             frame = pygame.transform.scale(frame, (width, height))
             self.frames.append(frame)
+
         self.current_frame = 0
-        self.animation_speed = 0.15  # sekundy na snímek
+        self.animation_speed = 0.15 
         self.last_update = pygame.time.get_ticks()
+        
         super().__init__(x, y, width, height, color, speed_y, self.frames[0])
 
     def update(self):
