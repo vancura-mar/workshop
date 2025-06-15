@@ -11,7 +11,6 @@ import time
 class Game:
     def __init__(self, width=500, height=700, title="Bee Saver"):
         """Inicializace hry"""
-        pygame.init()
         self.width = width
         self.height = height
         self.screen = pygame.display.set_mode((width, height))
@@ -70,6 +69,7 @@ class Game:
         self.score_effect = None
         self.life_effect_end = 0
         self.game_over = False
+        self.running = True  
         self.keys = {
             pygame.K_LEFT: False,
             pygame.K_RIGHT: False,
@@ -184,9 +184,6 @@ class Game:
             elif self.honey.is_off_screen(self.height):
                 self.honey = None
 
-        # Výpis počtu včel v zásobníku hráče a úlu
-        print(f"Včely v zásobníku hráče: {self.player.bee_buffer} | Včely v úlu: {self.hive.bee_buffer} | Životy: {self.player.lives}")
-
         if self.player.lives <= 0:
             self.game_over = True
 
@@ -201,6 +198,7 @@ class Game:
             wasp.draw(self.screen)
         if self.honey:
             self.honey.draw(self.screen)
+            
         # HUD - grafické čtverečky
         margin = 20
         box_size = 24
@@ -276,12 +274,9 @@ class Game:
         pygame.display.flip()
 
     def run(self):
-        """Hlavní herní smyčka"""
         while self.running:
             self.handle_events()
             self.update()
             self.draw()
             self.clock.tick(self.fps)
-
-        pygame.quit()
-        sys.exit() 
+        return False  
