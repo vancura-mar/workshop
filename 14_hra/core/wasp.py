@@ -17,5 +17,5 @@ class Wasp(GameObject):
         sprite_sheet = pygame.image.load("assets/waspyboi-sprite.png").convert_alpha()
         sprite_width = sprite_sheet.get_width() // 2
         wasp_image = sprite_sheet.subsurface((0, 0, sprite_width, sprite_sheet.get_height()))
-        wasp_image = pygame.transform.scale(wasp_image, (width, height))
-        super().__init__(x, y, width, height, color, speed_y, wasp_image)
+        self.image = pygame.transform.scale(wasp_image, (width, height))
+        super().__init__(x, y, width, height, color, speed_y, self.image)

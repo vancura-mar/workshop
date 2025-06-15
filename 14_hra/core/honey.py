@@ -1,4 +1,5 @@
 import random
+import pygame
 from .game_object import GameObject
 
 class Honey(GameObject):
@@ -9,5 +10,6 @@ class Honey(GameObject):
             max_x = screen_width - width
         x = random.randint(0, max_x)
         y = -height
-        color = (255, 200, 40)  # Medová barva
-        super().__init__(x, y, width, height, color, speed_y) 
+        self.original_image = pygame.image.load("assets/honeycomb.png").convert_alpha()
+        self.image = pygame.transform.scale(self.original_image, (width, height))
+        super().__init__(x, y, width, height, None, speed_y, image=self.image)

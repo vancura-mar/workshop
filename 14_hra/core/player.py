@@ -14,7 +14,7 @@ class Player:
         self.score = 0
         self.rect = pygame.Rect(x, self.y, width, height)
         self.color = (255, 200, 0)  # Žlutá barva pro včelaře
-        self.sprite_sheet = pygame.image.load("assets/beekeeper-scaled.png").convert_alpha()
+        self.image = pygame.image.load("assets/beekeeper-scaled.png").convert_alpha()
         self.screen_height = screen_height
         self.stunned_until = 0  # čas do kdy je hráč omráčen
         self.bee_buffer = 0           # zásobník včel
@@ -31,14 +31,14 @@ class Player:
         self.is_moving = False
         self.facing_right = True  # defaultně kouká doprava
 
-        if self.sprite_sheet:
+        if self.image:
             rect_walk_1 = pygame.Rect(0, 0, self.sprite_frame_width, self.sprite_frame_height)
-            self.animation_frames_walk.append(self.sprite_sheet.subsurface(rect_walk_1))
+            self.animation_frames_walk.append(self.image.subsurface(rect_walk_1))
             rect_walk_2 = pygame.Rect(self.sprite_frame_width, 0, self.sprite_frame_width, self.sprite_frame_height)
-            self.animation_frames_walk.append(self.sprite_sheet.subsurface(rect_walk_2))
+            self.animation_frames_walk.append(self.image.subsurface(rect_walk_2))
 
             rect_idle = pygame.Rect(0, self.sprite_frame_height, self.sprite_frame_width, self.sprite_frame_height)
-            self.animation_frame_idle = self.sprite_sheet.subsurface(rect_idle)
+            self.animation_frame_idle = self.image.subsurface(rect_idle)
 
             self.image = pygame.transform.scale(self.animation_frame_idle, (self.width, self.height))
         else:
@@ -47,7 +47,7 @@ class Player:
 
     def update_animation(self):
         """Aktualizuje snímek animace."""
-        if not self.sprite_sheet:
+        if not self.image:
             return
 
         now = pygame.time.get_ticks()
